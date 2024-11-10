@@ -1,0 +1,152 @@
+setup switch layer 2: +  multiplayerswitch
+-----------------
+en
+conf t
+hostname MWDBP
+
+line console 0
+password cisco
+login
+exec-timeout 3 0
+exit
+
+enable password cisco
+banner motd #UNAUTHORISED ACCESS IS PROHIBITED!!!!!#
+no ip domain-lookup
+
+service password-encryption
+
+username cisco password cisco
+ip domain-name cisco.com 
+crypto key generate rsa general-keys modulus 1024
+
+ip ssh version 2
+access-list 2 permit 172.20.0.0 255.255.0.0
+access-list 2 deny any
+
+line vty 0 15
+login local
+
+transport input ssh
+access-class 2 in
+exit
+
+do wr
+
+
+----------------- var vlan in multiplayerswitch
+vlan 10 
+name FLOOR1A
+vlan 20
+name FLOOR2A
+vlan 30
+name FLOOR3A
+vlan 40
+name FLOOR4A
+vlan 50
+name FLOOR5A
+exit
+
+int range gig1/0/2-6
+switchport mode trunk
+exit
+
+do wr
+
+//////////with multiswitch branch
+vlan 10
+name FLOOR1DBP
+vlan 20
+name FLOOR2DBP
+exit
+
+int range gig1/0/2-3
+switchport mode trunk
+exit
+
+do wr
+
+---------------------- config switch layer 2:
+vlan 60 
+name FLOOR1B
+vlan 70
+name FLOOR2B
+vlan 80
+name FLOOR3B
+vlan 90
+name FLOOR4B
+vlan 100
+name FLOOR5B
+exit
+
+int range fa0/1
+switchport mode trunk
+ex
+
+int range fa0/2-24
+switchport mode access
+switchport access vlan 10
+ex
+
+do wr
+
+////////////////branch switch
+vlan 10
+name FLOOR1DBP
+vlan 20
+name FLOOR2DBP
+exit
+
+int range fa0/1
+switchport mode trunk
+ex
+
+int range fa0/2-24
+switchport mode access
+switchport access vlan 20
+ex
+
+do wr
+
+
+---------------------------- config switServer
+int range fa0/2-24
+spanning-tree portfast
+spanning-tree bpduguard enable
+
+ex
+
+do wr
+
+
+-------------------- routing
+
+ip routing
+int gig1/0/1
+no switchport
+ip add 10.10.120.1 255.255.255.252
+ex
+
+do wr
+
+
+-------------------- config firewalll
+
+int gig1/2
+no shut
+
+nameif INSIDE
+
+security-level 100
+
+ip add 10.10.120.2 255.255.255.252
+ex
+
+do wr
+wr mem
+
+
+
+------------------ config DHCP
+
+
