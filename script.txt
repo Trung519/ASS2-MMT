@@ -247,3 +247,45 @@ network 10.10.120.40 255.255.255.252 area 0
 ex 
 do wr
 wr mem
+
+--------------------------- security and config OUTSIDE network
+
+route OUTSIDE 0.0.0.0 0.0.0.0 100.100.100.1
+
+object network INSIDE1-OUTSIDE
+subnet 192.168.96.0 255.255.240.0
+nat (INSIDE1A,OUTSIDE) dynamic interface
+object network INSIDE2-OUTSIDE
+subnet 192.168.192.0 255.255.240.0
+nat (INSIDE2B,OUTSIDE) dynamic interface
+
+do wr
+wr mem
+////////////////////// sample in branch
+
+route OUTSIDE 0.0.0.0 0.0.0.0 10.10.120.41
+
+object network INSIDE-OUTSIDE
+subnet 172.20.0.0 255.255.0.0
+nat (INSIDE,OUTSIDE) dynamic interface
+
+do wr
+wr mem
+
+
+----------------------- config security TCP, UDP in firewall
+
+access-list SV-ACCESS extended permit icmp any any
+
+access-list SV-ACCESS extended permit udp any any eq 67
+access-list SV-ACCESS extended permit udp any any eq 68
+access-list SV-ACCESS extended permit udp any any eq 53
+access-list SV-ACCESS extended permit tcp any any eq 53
+access-list SV-ACCESS extended permit tcp any any eq 80
+access-list SV-ACCESS extended permit tcp any any eq 25
+access-list SV-ACCESS extended permit tcp any any eq 21
+access-list SV-ACCESS extended permit tcp any any eq 20
+
+access-group SV-ACCESS in interface OUTSIDE
+
+wr mem
