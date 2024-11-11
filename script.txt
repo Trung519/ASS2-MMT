@@ -150,3 +150,100 @@ wr mem
 ------------------ config DHCP
 
 
+----------------- config multiplayerswitch with each vlans of its:
+int vlan 60
+ip add 192.168.201.2 255.255.255.0
+ip helper-address 10.10.100.7
+ex
+
+int vlan 70
+ip add 192.168.202.2 255.255.255.0
+ip helper-address 10.10.100.7
+ex
+
+int vlan 80
+ip add 192.168.203.2 255.255.255.0
+ip helper-address 10.10.100.7
+ex
+
+int vlan 90
+ip add 192.168.204.2 255.255.255.0
+ip helper-address 10.10.100.7
+ex
+
+int vlan 100
+ip add 192.168.205.2 255.255.255.0
+ip helper-address 10.10.100.7
+ex
+
+do wr
+
+//////////////////////same in branch
+
+int vlan 10
+ip add 172.20.21.2 255.255.255.0
+ip helper-address 10.10.100.7
+ex
+
+int vlan 20
+ip add 172.20.22.2 255.255.255.0
+ip helper-address 10.10.100.7
+standby 20 ip 172.20.22.1
+ex
+
+do wr
+
+
+---------------------- config ospf:
+router ospf 15
+network 192.168.201.0 0.0.0.255 area 0
+network 192.168.202.0 0.0.0.255 area 0
+network 192.168.203.0 0.0.0.255 area 0
+network 192.168.204.0 0.0.0.255 area 0
+network 192.168.205.0 0.0.0.255 area 0
+network 10.10.110.4 0.0.0.3 area 0
+ex
+
+do wr
+
+/////////////////same in branch
+
+router ospf 15
+network 172.20.21.0 0.0.0.255 area 0
+network 172.20.22.0 0.0.0.255 area 0
+network 10.10.120.0 0.0.0.3 area 0
+ex
+
+do wr
+
+////////////////// same in router
+
+router ospf 15
+network 10.10.130.40 0.0.0.3 area 0
+network 100.100.120.0 0.0.0.3 area 0
+ex
+
+do wr
+
+
+//////// same in firewal - MAIN
+
+router ospf 15
+network 10.10.110.4 255.255.255.252 area 0
+network 10.10.110.0 255.255.255.252 area 0
+network 100.100.100.0 255.255.255.252 area 0
+network 10.10.100.0 255.255.255.0 area 0
+
+ex
+do wr
+wr mem
+
+/////////// same in firewal branch
+
+router ospf 15
+network 10.10.120.0 255.255.255.252 area 0
+network 10.10.110.0 255.255.255.0 area 0
+network 10.10.120.40 255.255.255.252 area 0
+ex 
+do wr
+wr mem
