@@ -150,45 +150,44 @@ wr mem
 ------------------ config DHCP
 
 
------------------ config multiplayerswitch with each vlans of its:
+----------------- config multiplayerswitch with each vlans of its:  // remember that ip add is the default gateway of this switch
 int vlan 60
-ip add 192.168.201.2 255.255.255.0
+ip add 192.168.201.1 255.255.255.0
 ip helper-address 10.10.100.7
 ex
 
 int vlan 70
-ip add 192.168.202.2 255.255.255.0
+ip add 192.168.202.1 255.255.255.0
 ip helper-address 10.10.100.7
 ex
 
 int vlan 80
-ip add 192.168.203.2 255.255.255.0
+ip add 192.168.203.1 255.255.255.0
 ip helper-address 10.10.100.7
 ex
 
 int vlan 90
-ip add 192.168.204.2 255.255.255.0
+ip add 192.168.204.1 255.255.255.0
 ip helper-address 10.10.100.7
 ex
 
 int vlan 100
-ip add 192.168.205.2 255.255.255.0
+ip add 192.168.205.1 255.255.255.0
 ip helper-address 10.10.100.7
 ex
 
 do wr
 
-//////////////////////same in branch
+//////////////////////same in branch /// the same note below
 
 int vlan 10
-ip add 172.20.21.2 255.255.255.0
+ip add 172.20.21.1 255.255.255.0
 ip helper-address 10.10.100.7
 ex
 
 int vlan 20
-ip add 172.20.22.2 255.255.255.0
+ip add 172.20.22.1 255.255.255.0
 ip helper-address 10.10.100.7
-standby 20 ip 172.20.22.1
 ex
 
 do wr
@@ -289,3 +288,14 @@ access-list SV-ACCESS extended permit tcp any any eq 20
 access-group SV-ACCESS in interface OUTSIDE
 
 wr mem
+
+
+------------------------------- connect PCs in same LAN config in multiplayerswitch
+
+
+int gig1/0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+ip routing
+
+do wr
