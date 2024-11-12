@@ -290,12 +290,39 @@ access-group SV-ACCESS in interface OUTSIDE
 wr mem
 
 
-------------------------------- connect PCs in same LAN config in multiplayerswitch
+------------------------------- config wrireless DHCP in firewall
+
+int gig1/4
+no shut
+nameif DBP-ACCESS
+ip add 10.6.6.1 255.255.255.0
+ex
+
+dhcp address 10.6.6.0-10.6.6.255 DBP-ACCESS
+dhcp enable DBP-ACCESS
+
+wr mem
 
 
-int gig1/0/2
-switchport trunk encapsulation dot1q
-switchport mode trunk
-ip routing
+------------------- config policy to access http in firewall
 
-do wr
+service-policy global_policy global
+
+policy-map global_policy
+class inspection_default
+inspect http
+ex
+
+wr mem
+
+policy-map type inspect dns preset_dns_map
+parameters
+message-length maximum 512
+ex
+
+policy-map global_policy
+class inspection_default
+inspect dns preset_dns_map
+ex
+
+wr mem
