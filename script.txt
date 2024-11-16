@@ -278,12 +278,12 @@ access-list SV-ACCESS extended permit icmp any any
 
 access-list SV-ACCESS extended permit udp any any eq 67
 access-list SV-ACCESS extended permit udp any any eq 68
-access-list SV-ACCESS extended permit udp any any eq 53
-access-list SV-ACCESS extended permit tcp any any eq 53
-access-list SV-ACCESS extended permit tcp any any eq 80
-access-list SV-ACCESS extended permit tcp any any eq 25
-access-list SV-ACCESS extended permit tcp any any eq 21
-access-list SV-ACCESS extended permit tcp any any eq 20
+no access-list SV-ACCESS extended permit udp any any eq 53
+no access-list SV-ACCESS extended permit tcp any any eq 53
+no access-list SV-ACCESS extended permit tcp any any eq 80
+no access-list SV-ACCESS extended permit tcp any any eq 25
+no access-list SV-ACCESS extended permit tcp any any eq 21
+no access-list SV-ACCESS extended permit tcp any any eq 20
 
 access-group SV-ACCESS in interface OUTSIDE
 
