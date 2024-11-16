@@ -278,10 +278,10 @@ access-list SV-ACCESS extended permit icmp any any
 
 access-list SV-ACCESS extended permit udp any any eq 67
 access-list SV-ACCESS extended permit udp any any eq 68
-no access-list SV-ACCESS extended permit udp any any eq 53
-no access-list SV-ACCESS extended permit tcp any any eq 53
-no access-list SV-ACCESS extended permit tcp any any eq 80
-no access-list SV-ACCESS extended permit tcp any any eq 25
+access-list SV-ACCESS extended permit udp any any eq 53
+access-list SV-ACCESS extended permit tcp any any eq 53
+access-list SV-ACCESS extended permit tcp any any eq 80
+access-list SV-ACCESS extended permit tcp any any eq 25
 no access-list SV-ACCESS extended permit tcp any any eq 21
 no access-list SV-ACCESS extended permit tcp any any eq 20
 
@@ -326,3 +326,21 @@ inspect dns preset_dns_map
 ex
 
 wr mem
+
+----------------------------- config NAT for ROUTER
+
+--------------------------------------------------------------------- waste
+object network DMZ-OUTSIDE
+ subnet 10.10.100.0 255.255.255.0
+ nat (DMZ,OUTSIDE) dynamic interface
+
+
+
+
+no dhcpd dns 8.8.8.8
+!
+no dhcpd address 10.0.0.0-10.0.255.255 CUS-ACCESS
+no dhcpd enable CUS-ACCESS
+!
+no dhcpd address 10.1.0.0-10.1.255.255 CUS-ACCESS2
+no dhcpd enable CUS-ACCESS2
