@@ -2,7 +2,7 @@ setup switch layer 2: +  multiplayerswitch
 -----------------
 en
 conf t
-hostname MWDBP
+hostname MWBHTQ
 
 line console 0
 password cisco
@@ -21,7 +21,7 @@ ip domain-name cisco.com
 crypto key generate rsa general-keys modulus 1024
 
 ip ssh version 2
-access-list 2 permit 172.20.0.0 255.255.0.0
+access-list 2 permit 10.10.120.0 255.255.255.0
 access-list 2 deny any
 
 line vty 0 15
@@ -344,3 +344,72 @@ no dhcpd enable CUS-ACCESS
 !
 no dhcpd address 10.1.0.0-10.1.255.255 CUS-ACCESS2
 no dhcpd enable CUS-ACCESS2
+
+
+access-list SV-ACCESS extended permit udp any any eq bootps
+access-list SV-ACCESS extended permit udp any any eq bootpc
+access-list SV-ACCESS extended permit udp any any eq domain
+access-list SV-ACCESS extended permit tcp any any eq domain
+access-list SV-ACCESS extended permit tcp any any eq www
+access-list SV-ACCESS extended permit tcp any any eq smtp
+
+!
+access-list 100 permit tcp 0.0.0.0 0.0.0.0 any eq www
+access-list 100 permit tcp 0.0.0.0 0.0.0.0 any eq 443
+access-list 100 deny ip any any
+!
+
+
+dhcpd address 10.0.0.0-10.0.255.255 CUS-ACCESS
+dhcpd enable CUS-ACCESS
+dhcpd address 10.1.0.0-10.1.255.255 CUS-ACCESS2
+dhcpd enable CUS-ACCESS2
+
+object network CUS-OUTSIDE
+ subnet 10.0.0.0 255.255.0.0
+ nat (CUS-ACCESS,OUTSIDE) dynamic interface
+
+object network CUS1-OUTSIDE
+ subnet 10.1.0.0 255.255.0.0
+ nat (CUS-ACCESS1,OUTSIDE) dynamic interface
+
+
+
+ object network DMZ-OUTSIDE
+ subnet 10.10.120.0 255.255.255.0
+ nat (DMZ,OUTSIDE) dynamic interface
+
+dhcpd address 10.1.0.0-10.1.255.255 CUS-ACCESS2
+dhcpd dns 10.10.100.10 interface CUS-ACCESS2
+
+
+object network CUS2-OUTSIDE
+ subnet 10.1.0.0 255.255.0.0
+ nat (CUS-ACCESS2,OUTSIDE) dynamic interface
+
+
+--------------------------------------- config wrireless :
+dhcpd address 10.0.0.0-10.0.255.255 CUS-ACCESS
+dhcpd dns 10.10.100.10 interface CUS-ACCESS
+dhcpd enable CUS-ACCESS
+
+object network DMZ-OUTSIDE
+ subnet 10.10.120.0 255.255.255.0
+ nat (DMZ,OUTSIDE) dynamic interface
+
+
+
+no access-list 2 permit 0.0.0.0 255.255.255.0
+no access-list 2 deny any
+
+
+
+int range fa0/2-24
+switchport mode access
+switch access vlan 9
+spanning-tree portfast
+spanning-tree bpduguard enable
+
+ex
+
+do wr
